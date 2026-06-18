@@ -1,0 +1,41 @@
+name: Build FolderHeat
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build executable
+        run: pyinstaller --onefile --name folderheat folderheat.py
+
+      - name: Rename binary (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: mv dist/folderheat dist/folderheat-${{ runner.os }}
+
+      - name: Rename binary (Windows)
+        if: runner.os == 'Windows'
+        run: mv dist/folderheat.exe dist/folderheat-Windows.exe
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/folderheat-*
