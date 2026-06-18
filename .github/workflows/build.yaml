@@ -2,12 +2,11 @@ name: Build FolderHeat
 
 on:
   push:
-    tags:
-      - "v*"
 
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -35,7 +34,8 @@ jobs:
         if: runner.os == 'Windows'
         run: mv dist/folderheat.exe dist/folderheat-Windows.exe
 
-      - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/folderheat-*
+          name: folderheat-${{ runner.os }}
+          path: dist/folderheat-*
