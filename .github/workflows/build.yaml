@@ -25,7 +25,7 @@ jobs:
         run: pip install pyinstaller
 
       - name: Build executable
-        run: pyinstaller --onefile --name folderheat folderheat.py
+        run: pyinstaller --onefile --name folderheat main.py
 
       - name: Rename binary (Linux/macOS)
         if: runner.os != 'Windows'
